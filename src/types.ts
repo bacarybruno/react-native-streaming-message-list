@@ -7,7 +7,6 @@ import type {
 
 export type StreamingMessageListConfig = {
   debounceMs?: number;
-  scrollThreshold?: number;
   placeholderStableDelayMs?: number;
 };
 

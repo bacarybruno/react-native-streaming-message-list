@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LegendListRef } from '@legendapp/list';
-import type { StreamingMessageListConfig } from '../types';
 import {
-  calculateDistanceFromBottom,
   calculateScrollOffsetForNewMessage,
-  DEFAULT_SCROLL_THRESHOLD,
   shouldScrollToNewMessage,
 } from '../scrollCalculations';
 
@@ -20,13 +17,9 @@ export const useScrollBehavior = ({
   isExistingThread,
   placeholderHeight,
   anchorMessageHeight,
-  shouldShowPlaceholder,
   containerHeight,
   containerPadding,
   paddingTop,
-  hasScrolledInSession,
-  setHasScrolledInSession,
-  config,
 }: {
   messagesListRef: React.RefObject<LegendListRef | null>;
   data: unknown[];
@@ -34,15 +27,10 @@ export const useScrollBehavior = ({
   isExistingThread: boolean;
   placeholderHeight: number;
   anchorMessageHeight: number;
-  shouldShowPlaceholder: boolean;
   containerHeight: number;
   containerPadding: number;
   paddingTop: number;
-  hasScrolledInSession: boolean;
-  setHasScrolledInSession: (value: boolean) => void;
-  config?: StreamingMessageListConfig;
 }) => {
-  const scrollThreshold = config?.scrollThreshold ?? DEFAULT_SCROLL_THRESHOLD;
   const scrollMetricsRef = useRef<ScrollMetrics>({
     contentOffset: 0,
     layoutMeasurement: 0,
@@ -122,30 +110,6 @@ export const useScrollBehavior = ({
     return true;
   };
 
-  const checkIfUserScrolledAway = (
-    contentHeight: number,
-    contentOffset: number,
-    layoutHeight: number
-  ): void => {
-    if (hasScrolledInSession) {
-      return;
-    }
-
-    const distanceFromBottom = calculateDistanceFromBottom(
-      contentHeight,
-      contentOffset,
-      layoutHeight,
-      {
-        shouldShowPlaceholder,
-        placeholderHeight,
-      }
-    );
-
-    if (distanceFromBottom > scrollThreshold) {
-      setHasScrolledInSession(true);
-    }
-  };
-
   const updateScrollMetrics = (
     contentOffset: number,
     layoutHeight: number
@@ -159,10 +123,8 @@ export const useScrollBehavior = ({
   return {
     scrollMetricsRef,
     hasPerformedInitialScrollToEnd,
-    isPlaceholderStable,
     performInitialScroll,
     performScrollToNewMessage,
-    checkIfUserScrolledAway,
     updateScrollMetrics,
     setHasPerformedInitialScrollToEnd,
     setIsPlaceholderStable,
