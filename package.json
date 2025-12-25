@@ -1,6 +1,6 @@
 {
   "name": "react-native-streaming-message-list",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "React Native message list with ChatGPT or Claude-style smart scrolling for incremental/streaming-like updates",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
