@@ -1,0 +1,30 @@
+import type { ReactNode } from 'react';
+import type {
+  LegendListRenderItemProps,
+  LegendListProps,
+  LegendListRef,
+} from '@legendapp/list';
+
+export type StreamingMessageListConfig = {
+  debounceMs?: number;
+  scrollThreshold?: number;
+  placeholderStableDelayMs?: number;
+};
+
+export type StreamingMessageListProps<T> = Omit<
+  LegendListProps<T>,
+  'data' | 'renderItem' | 'children'
+> & {
+  data: T[];
+  isStreaming?: boolean;
+  config?: StreamingMessageListConfig;
+  renderItem?: (info: LegendListRenderItemProps<T>) => ReactNode | null;
+};
+
+export type StreamingMessageListRef = LegendListRef;
+
+export type AnimatedMessageProps = {
+  animation: 'slideUp' | 'fadeIn' | 'none';
+  onAnimationComplete?: () => void;
+  children: ReactNode;
+};
