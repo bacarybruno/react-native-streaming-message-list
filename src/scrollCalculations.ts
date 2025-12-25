@@ -1,4 +1,3 @@
-export const DEFAULT_SCROLL_THRESHOLD = 30;
 const PLACEHOLDER_HEIGHT_TOLERANCE = 50;
 
 type PlaceholderState = {
@@ -9,24 +8,6 @@ type PlaceholderState = {
   anchorMessageHeight: number;
   needsScrollToNewMessage: boolean;
   isPlaceholderStable: boolean;
-};
-
-export const calculateDistanceFromBottom = (
-  contentHeight: number,
-  contentOffset: number,
-  layoutHeight: number,
-  placeholderState: Pick<
-    PlaceholderState,
-    'shouldShowPlaceholder' | 'placeholderHeight'
-  >
-): number => {
-  return (
-    contentHeight -
-    (contentOffset + layoutHeight) -
-    (placeholderState.shouldShowPlaceholder
-      ? placeholderState.placeholderHeight
-      : 0)
-  );
 };
 
 export const calculateScrollOffsetForNewMessage = (

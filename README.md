@@ -1,16 +1,15 @@
 # react-native-streaming-message-list
 
-**ChatGPT-style smart scrolling for React Native message lists.**
+**ChatGPT and Claude-style smart scrolling for React Native message lists.**
 
 A Flatlist compatible React Native component that replicates ChatGPT/Claude-like "new message snaps to top" scrolling behavior for conversational UIs where the last item can grow over time (e.g., streaming AI responses).
 
-https://github.com/user-attachments/assets/b97eaeb8-4d8b-4a1e-8401-d2eb9f8be48a
+![demo](https://github.com/user-attachments/assets/038161ee-a2ef-4386-a9a4-72cc63c44d3b)
 
 ## Features
 
 - **Smart scroll behavior**: New messages snap to top with dynamic blank space management
 - **Streaming-friendly**: Handles growing/updating content without scroll jank
-- **Respects user intent**: Preserves scroll position when users scroll away
 - **Optional animations**: Built-in slide-up and fade-in animations for new messages
 - **FlatList-like API**: Familiar props, works with any message data structure
 
@@ -193,7 +192,6 @@ Extends all `FlatList` props from `@legendapp/list`, plus:
 ```typescript
 type StreamingMessageListConfig = {
   debounceMs?: number;              // Debounce for placeholder height calculations (default: 150)
-  scrollThreshold?: number;          // Distance threshold for "scrolled away" detection (default: 30)
   placeholderStableDelayMs?: number; // Delay before placeholder is considered stable (default: 200)
 };
 ```
@@ -236,7 +234,7 @@ The component implements ChatGPT-style scrolling by:
 
 1. **Measuring heights**: Tracks the "anchor" message (last user message) and "streaming" content (growing assistant response)
 2. **Dynamic placeholder**: Injects blank space at the bottom so the anchor message lands near the top
-3. **Smart scrolling**: Only auto-scrolls when appropriate (user hasn't scrolled away)
+3. **Auto-scrolling**: Automatically scrolls to show new messages
 4. **Debounced updates**: Prevents jank during rapid content updates
 
 ## Contributing

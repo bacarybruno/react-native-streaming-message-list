@@ -52,8 +52,6 @@ export const StreamingMessageList = <T,>({
     setAnchorMessageHeight,
     setStreamingContentHeight,
     setShouldShowPlaceholder,
-    hasScrolledInSession,
-    setHasScrolledInSession,
     containerPadding,
     paddingTop,
     setContainerPadding,
@@ -61,10 +59,8 @@ export const StreamingMessageList = <T,>({
 
   const {
     scrollMetricsRef,
-    isPlaceholderStable,
     performInitialScroll,
     performScrollToNewMessage,
-    checkIfUserScrolledAway,
     updateScrollMetrics,
     setHasPerformedInitialScrollToEnd,
     setIsPlaceholderStable,
@@ -75,13 +71,9 @@ export const StreamingMessageList = <T,>({
     isExistingThread: data.length > 0,
     placeholderHeight,
     anchorMessageHeight,
-    shouldShowPlaceholder,
     containerHeight,
     containerPadding,
     paddingTop,
-    hasScrolledInSession,
-    setHasScrolledInSession,
-    config,
   });
 
   const prevStreamingRef = useRef(isStreaming);
@@ -139,14 +131,9 @@ export const StreamingMessageList = <T,>({
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     onScroll?.(event);
 
-    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    const { contentOffset, layoutMeasurement } = event.nativeEvent;
 
     updateScrollMetrics(contentOffset.y, layoutMeasurement.height);
-    checkIfUserScrolledAway(
-      contentSize.height,
-      contentOffset.y,
-      layoutMeasurement.height
-    );
   };
 
   const handleEndReached = () => {
@@ -187,8 +174,6 @@ export const StreamingMessageList = <T,>({
     setStreamingContentHeight,
   };
 
-  const shouldMaintainPosition = isPlaceholderStable && hasScrolledInSession;
-
   if (!renderItem) {
     throw new Error('renderItem is required for StreamingMessageList');
   }
@@ -206,7 +191,6 @@ export const StreamingMessageList = <T,>({
         extraData={isStreaming}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps="handled"
-        maintainVisibleContentPosition={shouldMaintainPosition}
         onContentSizeChange={handleContentSizeChange}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.2}
