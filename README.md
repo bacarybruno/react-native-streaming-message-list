@@ -27,7 +27,7 @@ A FlatList-compatible React Native component that replicates ChatGPT/Claude-like
 </p>
 
 <p align="center">
-  <strong>Platforms:</strong> 
+  <strong>Try it live on Expo Snack:</strong> 
   <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=android">Android</a> • 
   <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=ios">iOS</a> • 
   <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=web">Web</a>
