@@ -133,8 +133,7 @@ export const StreamingMessageList = <T,>({
 
     if (contentContainerStyle) {
       const style = StyleSheet.flatten(contentContainerStyle);
-      const padding =
-        typeof style.padding === 'number' ? style.padding : 0;
+      const padding = typeof style.padding === 'number' ? style.padding : 0;
       const paddingBottom =
         typeof style.paddingBottom === 'number' ? style.paddingBottom : padding;
       const topPadding =

@@ -21,7 +21,8 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
   const [placeholderHeight, setPlaceholderHeight] = useState(0);
   const [containerHeight, setContainerHeightState] = useState(0);
   const [anchorMessageHeight, setAnchorMessageHeightState] = useState(0);
-  const [whitespacePhase, setWhitespacePhase] = useState<WhitespacePhase>('none');
+  const [whitespacePhase, setWhitespacePhase] =
+    useState<WhitespacePhase>('none');
   const [containerPadding, setContainerPaddingState] = useState(0);
   const [paddingTop, setPaddingTopState] = useState(0);
 
