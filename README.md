@@ -10,7 +10,7 @@
   <a href="https://www.npmjs.com/package/react-native-streaming-message-list">
     <img src="https://img.shields.io/npm/v/react-native-streaming-message-list?style=flat&colorA=000000&colorB=000000" alt="Version" />
   </a>
-  <a href="https://bundlejs.com/?q=react-native-streaming-message-list&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-native%22,%22react-native-reanimated%22]}}">
+  <a href="https://bundlejs.com/?q=react-native-streaming-message-list&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-native%22,%22react-native-reanimated%22,%22react-native-web%22]}}">
     <img src="https://deno.bundlejs.com/?q=react-native-streaming-message-list&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-native%22,%22react-native-reanimated%22,%22react-native-web%22]}}&badge=true" alt="bundle size" />
   </a>
   <a href="https://github.com/bacarybruno/react-native-streaming-message-list/actions">
