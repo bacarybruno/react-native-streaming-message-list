@@ -26,6 +26,13 @@
 A FlatList-compatible React Native component that replicates ChatGPT/Claude-like "new message snaps to top" scrolling behavior for conversational UIs where the last item can grow over time (e.g., streaming AI responses).
 </p>
 
+<p align="center">
+  <strong>Platforms:</strong> 
+  <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=android">Android</a> • 
+  <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=ios">iOS</a> • 
+  <a href="https://snack.expo.dev/@bacarybruno/react-native-streaming-message-list-demo?platform=web">Web</a>
+</p>
+
 ## Features
 
 - **Smart scroll behavior**: New messages snap to top with dynamic blank space management
