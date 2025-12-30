@@ -43,24 +43,44 @@ This library requires [react-native-reanimated](https://docs.swmansion.com/react
 
 ## Quick Start
 
-> 💡 **For a complete working example**, check out the [example folder](./example) which includes a fully functional chat app demonstrating all features.
+> 💡 **For a complete working example**, check out the [example folder](./example).
 
 ### 1. Replace your list component
 
 Replace `FlatList` with `StreamingMessageList`. This component is built on [`@legendapp/list`](https://github.com/LegendApp/legend-list) and accepts the same FlatList-like props:
 
-```tsx
-import { StreamingMessageList } from 'react-native-streaming-message-list';
+```diff
+- import { FlatList } from 'react-native';
++ import { StreamingMessageList } from 'react-native-streaming-message-list';
 
-<StreamingMessageList
-  data={messages}
-  keyExtractor={(item) => item.id}
-  renderItem={renderMessage}
-  isStreaming={isStreaming}
-/>;
+- <FlatList
++ <StreamingMessageList
+    data={messages}
+    keyExtractor={(item) => item.id}
+    renderItem={renderMessage}
+  />
 ```
 
-### 2. Wrap your anchor and streaming items
+### 2. Add streaming state
+
+Create a state variable to track when messages are actively streaming:
+
+```tsx
+const [isStreaming, setIsStreaming] = useState(false);
+```
+
+Pass it to `StreamingMessageList`:
+
+```diff
+  <StreamingMessageList
+    data={messages}
+    keyExtractor={(item) => item.id}
+    renderItem={renderMessage}
++   isStreaming={isStreaming}
+  />
+```
+
+### 3. Wrap your anchor and streaming items
 
 To enable smart scrolling, wrap two special messages:
 
@@ -85,20 +105,6 @@ const renderMessage = ({ item, index }) => {
 
   return content;
 };
-```
-
-### 3. Toggle streaming state
-
-Pass `isStreaming={true}` to `StreamingMessageList` while the assistant message is being generated:
-
-```tsx
-const [isStreaming, setIsStreaming] = useState(false);
-
-// When starting to stream
-setIsStreaming(true);
-
-// When streaming completes
-setIsStreaming(false);
 ```
 
 That's it! The list will now handle ChatGPT-style scrolling automatically.
