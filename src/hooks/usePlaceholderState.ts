@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import debounce from 'lodash.debounce';
-import type { StreamingMessageListConfig } from '../types';
+import type { StreamingMessageListConfig, WhitespacePhase } from '../types';
 
 const DEFAULT_DEBOUNCE_MS = 150;
 
@@ -21,21 +21,14 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
   const [placeholderHeight, setPlaceholderHeight] = useState(0);
   const [containerHeight, setContainerHeightState] = useState(0);
   const [anchorMessageHeight, setAnchorMessageHeightState] = useState(0);
-  const [shouldShowPlaceholder, setShouldShowPlaceholder] = useState(false);
+  const [whitespacePhase, setWhitespacePhase] = useState<WhitespacePhase>('none');
   const [containerPadding, setContainerPaddingState] = useState(0);
   const [paddingTop, setPaddingTopState] = useState(0);
 
   const streamingContentHeightRef = useRef(0);
-
-  const debouncedSetPlaceholderHeight = useMemo(
-    () =>
-      debounce((height: number) => {
-        if (height > 0) {
-          setPlaceholderHeight(height);
-        }
-      }, debounceMs),
-    [debounceMs]
-  );
+  const debouncedSetPlaceholderHeight = debounce((height: number) => {
+    setPlaceholderHeight(height);
+  }, debounceMs);
 
   useEffect(() => {
     return () => {
@@ -90,11 +83,11 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
     placeholderHeight,
     containerHeight,
     anchorMessageHeight,
-    shouldShowPlaceholder,
+    whitespacePhase,
     setContainerHeight,
     setAnchorMessageHeight,
     setStreamingContentHeight,
-    setShouldShowPlaceholder,
+    setWhitespacePhase,
     containerPadding,
     paddingTop,
     setContainerPadding,

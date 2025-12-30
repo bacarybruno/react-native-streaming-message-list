@@ -9,6 +9,7 @@ import { LegendList } from '@legendapp/list';
 import type { LegendListRef } from '@legendapp/list';
 import { usePlaceholderState } from './hooks/usePlaceholderState';
 import { useScrollBehavior } from './hooks/useScrollBehavior';
+import { isWhitespaceInViewport } from './scrollCalculations';
 import { StreamingMessageListContext } from './StreamingMessageListContext';
 import type { StreamingMessageListInternalContext } from './StreamingMessageListContext';
 import type {
@@ -47,11 +48,11 @@ export const StreamingMessageList = <T,>({
     placeholderHeight,
     containerHeight,
     anchorMessageHeight,
-    shouldShowPlaceholder,
+    whitespacePhase,
     setContainerHeight,
     setAnchorMessageHeight,
     setStreamingContentHeight,
-    setShouldShowPlaceholder,
+    setWhitespacePhase,
     containerPadding,
     paddingTop,
     setContainerPadding,
@@ -64,6 +65,8 @@ export const StreamingMessageList = <T,>({
     updateScrollMetrics,
     setHasPerformedInitialScrollToEnd,
     setIsPlaceholderStable,
+    checkWhitespaceDismissal,
+    resetWhitespaceVisibility,
   } = useScrollBehavior({
     messagesListRef: listRef,
     data,
@@ -89,14 +92,26 @@ export const StreamingMessageList = <T,>({
       isStreaming && !wasStreaming && prevLength >= 2;
 
     if (isNewConversationFirstMessage || isNewMessageInExistingConversation) {
-      setShouldShowPlaceholder(true);
+      setWhitespacePhase('active');
+      resetWhitespaceVisibility();
       setAnchorMessageHeight(0);
       setStreamingContentHeight(0, true);
+    }
+
+    if (wasStreaming && !isStreaming && whitespacePhase !== 'dismissed') {
+      if (placeholderHeight > 0) {
+        setWhitespacePhase('visible_static');
+      } else {
+        setWhitespacePhase('none');
+      }
     }
   }, [
     data.length,
     isStreaming,
-    setShouldShowPlaceholder,
+    placeholderHeight,
+    whitespacePhase,
+    setWhitespacePhase,
+    resetWhitespaceVisibility,
     setAnchorMessageHeight,
     setStreamingContentHeight,
   ]);
@@ -118,22 +133,39 @@ export const StreamingMessageList = <T,>({
 
     if (contentContainerStyle) {
       const style = StyleSheet.flatten(contentContainerStyle);
-      const padding = style.padding ?? 0;
-      const paddingBottom = style.paddingBottom ?? padding;
-      const topPadding = style.paddingTop ?? padding;
-      setContainerPadding(
-        (paddingBottom as number) + (topPadding as number),
-        topPadding as number
-      );
+      const padding =
+        typeof style.padding === 'number' ? style.padding : 0;
+      const paddingBottom =
+        typeof style.paddingBottom === 'number' ? style.paddingBottom : padding;
+      const topPadding =
+        typeof style.paddingTop === 'number' ? style.paddingTop : padding;
+      setContainerPadding(paddingBottom + topPadding, topPadding);
     }
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     onScroll?.(event);
 
-    const { contentOffset, layoutMeasurement } = event.nativeEvent;
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
 
-    updateScrollMetrics(contentOffset.y, layoutMeasurement.height);
+    updateScrollMetrics(
+      contentOffset.y,
+      layoutMeasurement.height,
+      contentSize.height
+    );
+
+    if (whitespacePhase === 'visible_static' || whitespacePhase === 'active') {
+      const isVisible = isWhitespaceInViewport({
+        contentOffset: contentOffset.y,
+        layoutMeasurement: layoutMeasurement.height,
+        contentSize: contentSize.height,
+        placeholderHeight,
+      });
+
+      checkWhitespaceDismissal(isVisible, whitespacePhase, () => {
+        setWhitespacePhase('dismissed');
+      });
+    }
   };
 
   const handleEndReached = () => {
@@ -141,10 +173,6 @@ export const StreamingMessageList = <T,>({
   };
 
   const renderListFooterComponent = () => {
-    if (!shouldShowPlaceholder || placeholderHeight <= 0) {
-      return null;
-    }
-
     const listFooterComponent = ListFooterComponent ? (
       isValidElement(ListFooterComponent) ? (
         ListFooterComponent
@@ -152,6 +180,14 @@ export const StreamingMessageList = <T,>({
         <ListFooterComponent />
       )
     ) : null;
+
+    const shouldRenderPlaceholder =
+      (whitespacePhase === 'active' || whitespacePhase === 'visible_static') &&
+      placeholderHeight > 0;
+
+    if (!shouldRenderPlaceholder) {
+      return listFooterComponent;
+    }
 
     return (
       <View style={{ height: placeholderHeight }}>{listFooterComponent}</View>

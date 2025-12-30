@@ -44,3 +44,19 @@ export const shouldScrollToNewMessage = (
 
   return state.placeholderHeight >= expectedMinPlaceholderHeight;
 };
+
+export const isWhitespaceInViewport = ({ contentOffset, layoutMeasurement, contentSize, placeholderHeight }: {
+  contentOffset: number;
+  layoutMeasurement: number;
+  contentSize: number;
+  placeholderHeight: number;
+}): boolean => {
+  if (placeholderHeight <= 0 || contentSize <= 0) {
+    return false;
+  }
+
+  const viewportBottom = contentOffset + layoutMeasurement;
+  const whitespaceStart = contentSize - placeholderHeight;
+
+  return viewportBottom > whitespaceStart;
+};
