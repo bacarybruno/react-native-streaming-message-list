@@ -4,10 +4,12 @@ import {
   calculateScrollOffsetForNewMessage,
   shouldScrollToNewMessage,
 } from '../scrollCalculations';
+import type { WhitespacePhase } from '../types';
 
 type ScrollMetrics = {
   contentOffset: number;
   layoutMeasurement: number;
+  contentSize: number;
 };
 
 export const useScrollBehavior = ({
@@ -34,12 +36,14 @@ export const useScrollBehavior = ({
   const scrollMetricsRef = useRef<ScrollMetrics>({
     contentOffset: 0,
     layoutMeasurement: 0,
+    contentSize: 0,
   });
 
   const [hasPerformedInitialScrollToEnd, setHasPerformedInitialScrollToEnd] =
     useState(false);
   const [isPlaceholderStable, setIsPlaceholderStable] = useState(false);
   const needsScrollToNewMessageRef = useRef(false);
+  const wasWhitespaceVisibleRef = useRef(false);
 
   const prevStreamingRef = useRef(isStreaming);
   const prevDataCountRef = useRef(data.length);
@@ -112,12 +116,36 @@ export const useScrollBehavior = ({
 
   const updateScrollMetrics = (
     contentOffset: number,
-    layoutHeight: number
+    layoutHeight: number,
+    contentSize?: number
   ): void => {
     scrollMetricsRef.current = {
       contentOffset,
       layoutMeasurement: layoutHeight,
+      contentSize: contentSize ?? scrollMetricsRef.current.contentSize,
     };
+  };
+
+  const checkWhitespaceDismissal = (
+    isCurrentlyVisible: boolean,
+    whitespacePhase: WhitespacePhase,
+    onDismiss: () => void
+  ) => {
+    const wasVisible = wasWhitespaceVisibleRef.current;
+
+    wasWhitespaceVisibleRef.current = isCurrentlyVisible;
+
+    if (
+      (whitespacePhase === 'visible_static' || whitespacePhase === 'active') &&
+      wasVisible &&
+      !isCurrentlyVisible
+    ) {
+      onDismiss();
+    }
+  };
+
+  const resetWhitespaceVisibility = () => {
+    wasWhitespaceVisibleRef.current = false;
   };
 
   return {
@@ -128,5 +156,7 @@ export const useScrollBehavior = ({
     updateScrollMetrics,
     setHasPerformedInitialScrollToEnd,
     setIsPlaceholderStable,
+    checkWhitespaceDismissal,
+    resetWhitespaceVisibility,
   };
 };

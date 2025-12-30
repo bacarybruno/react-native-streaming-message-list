@@ -5,6 +5,12 @@ import type {
   LegendListRef,
 } from '@legendapp/list';
 
+export type WhitespacePhase =
+  | 'none'
+  | 'active'
+  | 'visible_static'
+  | 'dismissed';
+
 export type StreamingMessageListConfig = {
   debounceMs?: number;
   placeholderStableDelayMs?: number;
