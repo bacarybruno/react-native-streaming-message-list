@@ -15,8 +15,9 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
     (text: string) => {
       if (isStreaming || !text.trim()) return;
 
+      const now = Date.now();
       const userMessage: Message = {
-        id: `user-${Date.now()}`,
+        id: `user-${now}`,
         text: text.trim(),
         role: 'user',
         isNew: true,
@@ -25,26 +26,28 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
       setMessages((prev) => [...prev, userMessage]);
       setIsStreaming(true);
 
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `assistant-${now}`,
+            text: '',
+            role: 'assistant',
+            isNew: false,
+          },
+        ]);
+      }, 50);
+
       simulateAIResponse(
         (chunk) => {
           setMessages((prev) => {
             const lastMessage = prev[prev.length - 1];
-            if (lastMessage?.role === 'assistant') {
-              return [
-                ...prev.slice(0, -1),
-                { ...lastMessage, text: lastMessage.text + chunk },
-              ];
-            } else {
-              return [
-                ...prev,
-                {
-                  id: `assistant-${Date.now()}`,
-                  text: chunk,
-                  role: 'assistant',
-                  isNew: true,
-                },
-              ];
-            }
+            if (!lastMessage || lastMessage.role !== 'assistant') return prev;
+
+            return [
+              ...prev.slice(0, -1),
+              { ...lastMessage, text: lastMessage.text + chunk },
+            ];
           });
         },
         {
@@ -73,7 +76,7 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
         isStreaming;
 
       let animation: 'slideUp' | 'fadeIn' | 'none' = 'none';
-      if (item.isNew) {
+      if (item.isNew && item.text) {
         animation = item.role === 'user' ? 'slideUp' : 'fadeIn';
       }
 

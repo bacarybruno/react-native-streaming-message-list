@@ -74,7 +74,8 @@ export const useSlideUpAnimation = ({
 
       translateY.value = withSpring(end.translateY, {
         damping: 20,
-        stiffness: 90,
+        stiffness: 200,
+        overshootClamping: true,
       });
 
       opacity.value = withTiming(end.opacity, { duration }, () => {

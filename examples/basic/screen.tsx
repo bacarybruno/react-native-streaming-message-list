@@ -20,7 +20,7 @@ import { useChatMessages } from '../shared/useChatMessages';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
-    useChatMessages({ initialDelay: 1000, chunkDelay: 80 });
+    useChatMessages();
   const [input, setInput] = useState('');
 
   const handleSend = () => {
@@ -37,6 +37,10 @@ export const BasicChatScreen = () => {
 
     if (item.isNew) {
       setTimeout(() => clearIsNew(item.id), 500);
+    }
+
+    if (!item.text) {
+      return null;
     }
 
     let content = (

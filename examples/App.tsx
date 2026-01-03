@@ -1,6 +1,6 @@
 import { StatusBar } from 'react-native';
-import { BasicChatScreen } from './screens/BasicChatScreen';
-import { ChatGPTScreen } from './screens/ChatGPTScreen';
+import { BasicChatScreen } from './basic/screen';
+import { ChatGPTScreen } from './chatgpt/screen';
 
 const variant = (process.env.EXPO_PUBLIC_DEMO_VARIANT || 'chatgpt') as
   | 'basic'

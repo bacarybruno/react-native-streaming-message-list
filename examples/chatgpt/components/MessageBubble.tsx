@@ -1,4 +1,13 @@
+import { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { Octicons } from '@expo/vector-icons';
 import { theme } from '../theme';
 
@@ -6,12 +15,14 @@ type MessageBubbleProps = {
   text: string;
   role: 'user' | 'assistant';
   showActions?: boolean;
+  isStreaming?: boolean;
 };
 
 export const MessageBubble = ({
   text,
   role,
   showActions = false,
+  isStreaming = false,
 }: MessageBubbleProps) => {
   const isUser = role === 'user';
 
@@ -23,11 +34,17 @@ export const MessageBubble = ({
           isUser ? styles.userBubble : styles.assistantBubble,
         ]}
       >
-        <Text
-          style={[styles.text, isUser ? styles.userText : styles.assistantText]}
-        >
-          {text}
-        </Text>
+        <View style={styles.textRow}>
+          <Text
+            style={[
+              styles.text,
+              isUser ? styles.userText : styles.assistantText,
+            ]}
+          >
+            {text}
+          </Text>
+          {!isUser && isStreaming && <StreamingDot />}
+        </View>
       </View>
 
       {showActions && isUser && (
@@ -83,6 +100,31 @@ export const MessageBubble = ({
   );
 };
 
+const StreamingDot = () => {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(1.25, { duration: 625, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 625, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1,
+      false
+    );
+  }, [scale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.streamingDotContainer, animatedStyle]}>
+      <Text style={styles.streamingDot}>●</Text>
+    </Animated.View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -108,6 +150,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: 0,
   },
+  textRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
   text: {
     fontSize: 16,
     lineHeight: 24,
@@ -117,6 +164,15 @@ const styles = StyleSheet.create({
   },
   assistantText: {
     color: theme.colors.textPrimary,
+  },
+  streamingDotContainer: {
+    marginLeft: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  streamingDot: {
+    color: theme.colors.textPrimary,
+    fontSize: 14,
   },
   userActions: {
     flexDirection: 'row',
