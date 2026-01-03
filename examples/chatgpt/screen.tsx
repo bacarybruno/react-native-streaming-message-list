@@ -8,8 +8,8 @@ import {
   StreamingMessageList,
   AnchorItem,
   StreamingItem,
-  AnimatedMessage,
 } from 'react-native-streaming-message-list';
+import Animated from 'react-native-reanimated';
 import { Header, MessageBubble, Composer } from './components';
 import { theme } from './theme';
 import type { Message } from '../shared/types';
@@ -23,7 +23,7 @@ export const ChatGPTScreen = () => {
     });
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isStreamingMessage, animation } = getMessageMeta(
+    const { isLastUserMessage, isStreamingMessage, entering } = getMessageMeta(
       item,
       index
     );
@@ -47,7 +47,7 @@ export const ChatGPTScreen = () => {
       content = <StreamingItem>{content}</StreamingItem>;
     }
 
-    return <AnimatedMessage animation={animation}>{content}</AnimatedMessage>;
+    return <Animated.View entering={entering}>{content}</Animated.View>;
   };
 
   return (

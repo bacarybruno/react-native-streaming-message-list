@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { FadeIn } from 'react-native-reanimated';
 import type { Message } from './types';
 import { simulateAIResponse } from './simulateAI';
 
@@ -75,12 +76,16 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
         index === messages.length - 1 &&
         isStreaming;
 
-      let animation: 'slideUp' | 'fadeIn' | 'none' = 'none';
-      if (item.isNew && item.text) {
-        animation = item.role === 'user' ? 'slideUp' : 'fadeIn';
+      let entering = undefined;
+      if (item.isNew && item.text && item.role === 'user') {
+        const isFirstUserMessage =
+          messages.findIndex((m) => m.role === 'user') === index;
+        if (isFirstUserMessage) {
+          entering = FadeIn.duration(350);
+        }
       }
 
-      return { isLastUserMessage, isStreamingMessage, animation };
+      return { isLastUserMessage, isStreamingMessage, entering };
     },
     [messages, isStreaming]
   );

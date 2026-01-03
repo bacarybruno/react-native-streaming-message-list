@@ -27,9 +27,3 @@ export type StreamingMessageListProps<T> = Omit<
 };
 
 export type StreamingMessageListRef = LegendListRef;
-
-export type AnimatedMessageProps = {
-  animation: 'slideUp' | 'fadeIn' | 'none';
-  onAnimationComplete?: () => void;
-  children: ReactNode;
-};
