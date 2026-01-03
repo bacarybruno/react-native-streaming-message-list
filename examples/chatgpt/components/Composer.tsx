@@ -49,6 +49,7 @@ export const Composer = ({ onSend, disabled = false }: ComposerProps) => {
           onSubmitEditing={handleSend}
           underlineColorAndroid="transparent"
           returnKeyType="send"
+          autoFocus
         />
 
         <TouchableOpacity

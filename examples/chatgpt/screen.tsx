@@ -10,14 +10,17 @@ import {
   StreamingItem,
   AnimatedMessage,
 } from 'react-native-streaming-message-list';
-import { Header, MessageBubble, Composer } from '../chatgpt/components';
-import { theme } from '../chatgpt/theme';
+import { Header, MessageBubble, Composer } from './components';
+import { theme } from './theme';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
-    useChatMessages();
+    useChatMessages({
+      initialDelay: 3000,
+      chunkDelay: 80,
+    });
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
     const { isLastUserMessage, isStreamingMessage, animation } = getMessageMeta(
@@ -30,7 +33,12 @@ export const ChatGPTScreen = () => {
     }
 
     let content = (
-      <MessageBubble text={item.text} role={item.role} showActions />
+      <MessageBubble
+        text={item.text}
+        role={item.role}
+        showActions={!isStreamingMessage}
+        isStreaming={isStreamingMessage}
+      />
     );
 
     if (isLastUserMessage) {
@@ -72,5 +80,14 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: theme.spacing.lg,
+  },
+  footer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  footerText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.body.fontSize,
   },
 });
