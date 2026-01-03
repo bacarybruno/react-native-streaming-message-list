@@ -44,7 +44,8 @@
     "typecheck": "tsc",
     "release": "release-it --only-version",
     "test": "jest",
-    "lint": "eslint \"**/*.{js,ts,tsx}\""
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "postpublish": "yarn example snack"
   },
   "keywords": [
     "react-native",

@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import {
   StreamingMessageList,
@@ -51,25 +52,28 @@ export const ChatGPTScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
-      >
-        <Header />
+    <>
+      <StatusBar barStyle="light-content" />
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={0}
+        >
+          <Header />
 
-        <StreamingMessageList
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderMessage}
-          isStreaming={isStreaming}
-          contentContainerStyle={styles.listContent}
-        />
+          <StreamingMessageList
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={renderMessage}
+            isStreaming={isStreaming}
+            contentContainerStyle={styles.listContent}
+          />
 
-        <Composer onSend={sendMessage} disabled={isStreaming} />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          <Composer onSend={sendMessage} disabled={isStreaming} />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -80,14 +84,5 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: theme.spacing.lg,
-  },
-  footer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  footerText: {
-    color: theme.colors.textSecondary,
-    fontSize: theme.typography.body.fontSize,
   },
 });
