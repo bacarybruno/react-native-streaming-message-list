@@ -37,7 +37,6 @@ A FlatList-compatible React Native component that replicates ChatGPT/Claude-like
 
 - **Smart scroll behavior**: New messages snap to top with dynamic blank space management
 - **Streaming-friendly**: Handles growing/updating content without scroll jank
-- **Optional animations**: Built-in slide-up and fade-in animations for new messages
 - **FlatList-like API**: Familiar props, works with any message data structure
 
 ## Installation
@@ -139,18 +138,31 @@ That's it! The list will now handle ChatGPT-style scrolling automatically.
 
 - **`StreamingItem`**: Wrap the **currently growing/streaming message** (typically the last assistant message). This enables smooth scroll tracking as content updates.
 
-- **`AnimatedMessage`**: Optional animated wrapper for new messages. Supports `slideUp`, `fadeIn`, or `none` animations:
+### Optional animations
+
+For message animations, use `Animated.View` from `react-native-reanimated` with the `entering` prop. 
+
+**Recommended approach:** Animate only the first user message with a fade-in. The "slide-in" effect for new messages happens naturally through the library's placeholder and scroll-to-bottom behavior, so additional slide animations are unnecessary:
 
 ```tsx
-import { AnimatedMessage } from 'react-native-streaming-message-list';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-<AnimatedMessage
-  animation="slideUp"
-  onAnimationComplete={() => console.log('done')}
->
-  <YourMessageBubble />
-</AnimatedMessage>;
+const renderMessage = ({ item, index }) => {
+  const isFirstUserMessage = 
+    item.role === 'user' && 
+    messages.findIndex(m => m.role === 'user') === index;
+
+  let content = <YourMessageBubble message={item} />;
+
+  return (
+    <Animated.View entering={isFirstUserMessage ? FadeIn.duration(350) : undefined}>
+      {content}
+    </Animated.View>
+  );
+};
 ```
+
+See the [Reanimated documentation](https://docs.swmansion.com/react-native-reanimated/docs/layout-animations/entering-exiting-animations/) for more animation options.
 
 ### Typical message flow
 
@@ -205,18 +217,6 @@ Wrapper for content that's actively growing/updating (typically the last assista
   <YourMessageBubble />
 </StreamingItem>
 ```
-
-### `<AnimatedMessage>`
-
-Optional animated wrapper for new messages.
-
-#### Props
-
-| Prop                  | Type                              | Description                      |
-| --------------------- | --------------------------------- | -------------------------------- |
-| `animation`           | `'slideUp' \| 'fadeIn' \| 'none'` | Animation type                   |
-| `onAnimationComplete` | `() => void`                      | Callback when animation finishes |
-| `children`            | `ReactNode`                       | Content to animate               |
 
 ## How It Works
 

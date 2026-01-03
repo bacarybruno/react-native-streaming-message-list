@@ -13,8 +13,8 @@ import {
   StreamingMessageList,
   AnchorItem,
   StreamingItem,
-  AnimatedMessage,
 } from 'react-native-streaming-message-list';
+import Animated from 'react-native-reanimated';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 
@@ -30,7 +30,7 @@ export const BasicChatScreen = () => {
   };
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isStreamingMessage, animation } = getMessageMeta(
+    const { isLastUserMessage, isStreamingMessage, entering } = getMessageMeta(
       item,
       index
     );
@@ -67,7 +67,7 @@ export const BasicChatScreen = () => {
       content = <StreamingItem>{content}</StreamingItem>;
     }
 
-    return <AnimatedMessage animation={animation}>{content}</AnimatedMessage>;
+    return <Animated.View entering={entering}>{content}</Animated.View>;
   };
 
   return (
