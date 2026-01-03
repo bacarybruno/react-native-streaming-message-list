@@ -113,13 +113,6 @@ const styles = StyleSheet.create({
     outlineWidth: 0,
     outlineColor: 'transparent',
   },
-  micButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   sendButton: {
     width: theme.layout.sendButtonSize,
     height: theme.layout.sendButtonSize,
