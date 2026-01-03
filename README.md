@@ -48,9 +48,18 @@ npm install react-native-streaming-message-list react-native-reanimated
 
 This library requires [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/). Follow their installation guide if you haven't already.
 
+## Examples
+
+We provide multiple example apps showcasing different use cases:
+
+- **[Basic Example](./examples/basic/)** - Simple, minimal implementation showing core functionality
+- **[ChatGPT Example](./examples/chatgpt/)** - Fully styled ChatGPT-inspired UI with custom components, theme, and design tokens
+
+See the [examples README](./examples/README.md) for how to run and switch between demos.
+
 ## Quick Start
 
-> 💡 **For a complete working example**, check out the [example folder](./example).
+> 💡 **For a complete working example**, check out the [examples folder](./examples).
 
 ### 1. Replace your list component
 
@@ -118,7 +127,7 @@ That's it! The list will now handle ChatGPT-style scrolling automatically.
 
 ---
 
-**Need more?** See the [example folder](./example) for a complete, runnable chat app with streaming simulation.
+**Need more?** See the [examples folder](./examples) for complete, runnable chat apps with different UI styles.
 
 ## Common Patterns
 

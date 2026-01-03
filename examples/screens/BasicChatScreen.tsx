@@ -15,71 +15,28 @@ import {
   StreamingItem,
   AnimatedMessage,
 } from 'react-native-streaming-message-list';
+import type { Message } from '../shared/types';
+import { useChatMessages } from '../shared/useChatMessages';
 
-type Message = {
-  id: string;
-  text: string;
-  role: 'user' | 'assistant';
-  isNew?: boolean;
-};
-
-export default function App() {
-  const [messages, setMessages] = useState<Message[]>([]);
+export const BasicChatScreen = () => {
+  const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
+    useChatMessages({ initialDelay: 1000, chunkDelay: 80 });
   const [input, setInput] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
 
-  const sendMessage = () => {
-    if (!input.trim() || isStreaming) return;
-
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
-      text: input.trim(),
-      role: 'user',
-      isNew: true,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+  const handleSend = () => {
+    if (!input.trim()) return;
+    sendMessage(input);
     setInput('');
-    setIsStreaming(true);
-
-    simulateAIResponse((chunk) => {
-      setMessages((prev) => {
-        const lastMessage = prev[prev.length - 1];
-        if (lastMessage?.role === 'assistant') {
-          return [
-            ...prev.slice(0, -1),
-            { ...lastMessage, text: lastMessage.text + chunk },
-          ];
-        } else {
-          return [
-            ...prev,
-            {
-              id: `assistant-${Date.now()}`,
-              text: chunk,
-              role: 'assistant',
-              isNew: true,
-            },
-          ];
-        }
-      });
-    }).finally(() => setIsStreaming(false));
   };
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const isLastUserMessage =
-      item.role === 'user' &&
-      messages.findLastIndex((m) => m.role === 'user') === index;
-    const isStreamingMessage =
-      item.role === 'assistant' && index === messages.length - 1 && isStreaming;
+    const { isLastUserMessage, isStreamingMessage, animation } = getMessageMeta(
+      item,
+      index
+    );
 
-    let animation: 'slideUp' | 'fadeIn' | 'none' = 'none';
     if (item.isNew) {
-      animation = item.role === 'user' ? 'slideUp' : 'fadeIn';
-      setTimeout(() => {
-        setMessages((prev) =>
-          prev.map((m) => (m.id === item.id ? { ...m, isNew: false } : m))
-        );
-      }, 500);
+      setTimeout(() => clearIsNew(item.id), 500);
     }
 
     let content = (
@@ -138,7 +95,7 @@ export default function App() {
             onChangeText={setInput}
             placeholder="Type a message..."
             placeholderTextColor="#999"
-            onSubmitEditing={sendMessage}
+            onSubmitEditing={handleSend}
             editable={!isStreaming}
           />
           <TouchableOpacity
@@ -146,7 +103,7 @@ export default function App() {
               styles.sendButton,
               (!input.trim() || isStreaming) && styles.sendButtonDisabled,
             ]}
-            onPress={sendMessage}
+            onPress={handleSend}
             disabled={!input.trim() || isStreaming}
           >
             <Text style={styles.sendButtonText}>
@@ -157,40 +114,7 @@ export default function App() {
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-}
-
-const responses = [
-  'This is a simulated AI response that demonstrates the streaming behavior. ',
-  'The list automatically keeps the latest content visible while you can scroll up to read previous messages. ',
-  'Watch how the message grows smoothly without scroll jank! ',
-  'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?',
-  'Pretty neat, right? 🎉',
-];
-
-let responseIndex = 0;
-
-async function simulateAIResponse(
-  onChunk: (chunk: string) => void
-): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return new Promise((resolve) => {
-    const response = responses[responseIndex];
-    responseIndex = (responseIndex + 1) % responses.length;
-
-    const words = response?.split(' ') || [];
-    let index = 0;
-
-    const interval = setInterval(() => {
-      if (index < words.length) {
-        onChunk(words[index] + ' ');
-        index++;
-      } else {
-        clearInterval(interval);
-        resolve();
-      }
-    }, 80);
-  });
-}
+};
 
 const styles = StyleSheet.create({
   container: {
