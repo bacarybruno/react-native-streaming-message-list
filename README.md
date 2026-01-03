@@ -53,7 +53,7 @@ This library requires [react-native-reanimated](https://docs.swmansion.com/react
 We provide multiple example apps showcasing different use cases:
 
 - **[Basic Example](./examples/basic/)** - Simple, minimal implementation showing core functionality
-- **[ChatGPT Example](./examples/chatgpt/)** - Fully styled ChatGPT-inspired UI with custom components, theme, and design tokens
+- **[ChatGPT Example](./examples/chatgpt/)** - ChatGPT-inspired UI
 
 See the [examples README](./examples/README.md) for how to run and switch between demos.
 
