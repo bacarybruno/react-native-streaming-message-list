@@ -33,11 +33,11 @@ yarn example web
 
 A ChatGPT-style chat interface.
 
-<img src="https://github.com/user-attachments/assets/370c3970-969e-4754-b0ed-6192ccb129b6" alt="demo-chatgpt" width="250" />
+https://github.com/user-attachments/assets/370c3970-969e-4754-b0ed-6192ccb129b6
 
 ### Basic
 
 A minimal implementation showing the core streaming message list feature.
 
-<img src="https://github.com/user-attachments/assets/db5a3cf6-77c7-4c37-84be-d45c18dca9f7" alt="demo-basic" width="250" />
+https://github.com/user-attachments/assets/db5a3cf6-77c7-4c37-84be-d45c18dca9f7
 
