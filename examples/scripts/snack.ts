@@ -65,7 +65,7 @@ const snack = new Snack({
     },
     ...sourceFiles,
   },
-  sdkVersion: examplePackageJson.dependencies['expo'].replace(
+  sdkVersion: examplePackageJson.dependencies.expo.replace(
     '~',
     ''
   ) as SDKVersion,
