@@ -250,7 +250,7 @@ Wrapper for the message that should be "anchored" near the top when a new conver
 
 ### `<StreamingItem>`
 
-Wrapper for the last assistant message. Keep this wrapper even after streaming ends to track height changes.
+Wrapper for the last assistant message.
 
 ```tsx
 <StreamingItem>
