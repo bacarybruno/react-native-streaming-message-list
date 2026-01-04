@@ -1,13 +1,17 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Octicons, FontAwesome6 } from '@expo/vector-icons';
 import { theme } from '../theme';
+import { showNotImplementedAlert } from '../../shared/notImplemented';
 
 export const Header = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.leftActions}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="three-bars"
               size={20}
@@ -15,7 +19,10 @@ export const Header = () => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.modelSwitcher}>
+          <TouchableOpacity
+            style={styles.modelSwitcher}
+            onPress={showNotImplementedAlert}
+          >
             <Text style={styles.title}>ChatGPT</Text>
             <Octicons
               name="chevron-down"
@@ -26,14 +33,20 @@ export const Header = () => {
         </View>
 
         <View style={styles.rightActions}>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={showNotImplementedAlert}
+          >
             <FontAwesome6
               name="pen-to-square"
               size={18}
               color={theme.colors.textPrimary}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="kebab-horizontal"
               size={16}

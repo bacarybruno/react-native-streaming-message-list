@@ -1,28 +1,28 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
 } from 'react-native';
 import {
   StreamingMessageList,
   AnchorItem,
   StreamingItem,
 } from 'react-native-streaming-message-list';
+import type { StreamingMessageListRef } from 'react-native-streaming-message-list';
 import Animated from 'react-native-reanimated';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
     useChatMessages();
   const [input, setInput] = useState('');
+  const listRef = useRef<StreamingMessageListRef>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -31,10 +31,8 @@ export const BasicChatScreen = () => {
   };
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isStreamingMessage, entering } = getMessageMeta(
-      item,
-      index
-    );
+    const { isLastUserMessage, isLastAssistantMessage, entering } =
+      getMessageMeta(item, index);
 
     if (item.isNew) {
       setTimeout(() => clearIsNew(item.id), 500);
@@ -64,7 +62,7 @@ export const BasicChatScreen = () => {
 
     if (isLastUserMessage) {
       content = <AnchorItem>{content}</AnchorItem>;
-    } else if (isStreamingMessage) {
+    } else if (isLastAssistantMessage) {
       content = <StreamingItem>{content}</StreamingItem>;
     }
 
@@ -72,55 +70,51 @@ export const BasicChatScreen = () => {
   };
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-        >
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
-            <Text style={styles.headerSubtitle}>
-              ChatGPT-style smart scrolling
-            </Text>
-          </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
+          <Text style={styles.headerSubtitle}>
+            ChatGPT-style smart scrolling
+          </Text>
+        </View>
 
+        <View style={styles.listContainer}>
           <StreamingMessageList
+            ref={listRef}
             data={messages}
             keyExtractor={(item) => item.id}
             renderItem={renderMessage}
             isStreaming={isStreaming}
             contentContainerStyle={styles.listContent}
           />
+        </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={input}
-              onChangeText={setInput}
-              placeholder="Type a message..."
-              placeholderTextColor="#999"
-              onSubmitEditing={handleSend}
-              editable={!isStreaming}
-            />
-            <TouchableOpacity
-              style={[
-                styles.sendButton,
-                (!input.trim() || isStreaming) && styles.sendButtonDisabled,
-              ]}
-              onPress={handleSend}
-              disabled={!input.trim() || isStreaming}
-            >
-              <Text style={styles.sendButtonText}>
-                {isStreaming ? '...' : 'Send'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={input}
+            onChangeText={setInput}
+            placeholder="Type a message..."
+            placeholderTextColor="#999"
+            onSubmitEditing={handleSend}
+            editable={!isStreaming}
+          />
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              (!input.trim() || isStreaming) && styles.sendButtonDisabled,
+            ]}
+            onPress={handleSend}
+            disabled={!input.trim() || isStreaming}
+          >
+            <Text style={styles.sendButtonText}>
+              {isStreaming ? '...' : 'Send'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -128,6 +122,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  listContainer: {
+    flex: 1,
+  },
+  scrollButton: {
+    right: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
     backgroundColor: '#fff',

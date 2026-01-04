@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Octicons } from '@expo/vector-icons';
 import { theme } from '../theme';
+import { showNotImplementedAlert } from '../../shared/notImplemented';
 
 type MessageBubbleProps = {
   text: string;
@@ -49,10 +50,16 @@ export const MessageBubble = ({
 
       {showActions && isUser && (
         <View style={styles.userActions}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons name="copy" size={16} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="pencil"
               size={16}
@@ -64,30 +71,48 @@ export const MessageBubble = ({
 
       {showActions && !isUser && (
         <View style={styles.assistantActions}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons name="copy" size={16} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="thumbsup"
               size={16}
               color={theme.colors.textPrimary}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="thumbsdown"
               size={16}
               color={theme.colors.textPrimary}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons name="share" size={16} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons name="sync" size={16} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={showNotImplementedAlert}
+          >
             <Octicons
               name="kebab-horizontal"
               size={16}
