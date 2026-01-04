@@ -34,10 +34,8 @@ export const BasicChatScreen = () => {
   };
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isLastAssistantMessage, entering } = getMessageMeta(
-      item,
-      index
-    );
+    const { isLastUserMessage, isLastAssistantMessage, entering } =
+      getMessageMeta(item, index);
 
     if (item.isNew) {
       setTimeout(() => clearIsNew(item.id), 500);

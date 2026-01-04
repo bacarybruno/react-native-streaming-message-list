@@ -251,7 +251,11 @@ export const StreamingMessageList = <T,>({
     }
 
     return undefined;
-  }, [debouncedPlaceholderHeight, setIsPlaceholderStable, placeholderStableDelayMs]);
+  }, [
+    debouncedPlaceholderHeight,
+    setIsPlaceholderStable,
+    placeholderStableDelayMs,
+  ]);
 
   const internalContextValue: StreamingMessageListInternalContextType = {
     setAnchorMessageHeight,

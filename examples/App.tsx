@@ -1,5 +1,5 @@
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BasicChatScreen } from './src/basic/screen';
 import { ChatGPTScreen } from './src/chatgpt/screen';
 
@@ -14,5 +14,5 @@ export default function App() {
         {variant === 'basic' ? <BasicChatScreen /> : <ChatGPTScreen />}
       </KeyboardProvider>
     </SafeAreaProvider>
-  )
+  );
 }

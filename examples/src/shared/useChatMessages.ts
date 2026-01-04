@@ -79,7 +79,7 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
         index === messages.length - 1 &&
         isStreaming;
 
-      let entering = undefined;
+      let entering;
       if (item.isNew && item.text && item.role === 'user') {
         const isFirstUserMessage =
           messages.findIndex((m) => m.role === 'user') === index;
@@ -88,7 +88,12 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
         }
       }
 
-      return { isLastUserMessage, isLastAssistantMessage, isStreamingMessage, entering };
+      return {
+        isLastUserMessage,
+        isLastAssistantMessage,
+        isStreamingMessage,
+        entering,
+      };
     },
     [messages, isStreaming]
   );

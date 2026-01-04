@@ -15,10 +15,7 @@ type ComposerProps = {
   disabled?: boolean;
 };
 
-export const Composer = ({
-  onSend,
-  disabled = false,
-}: ComposerProps) => {
+export const Composer = ({ onSend, disabled = false }: ComposerProps) => {
   const [text, setText] = useState('');
 
   const handleSend = () => {

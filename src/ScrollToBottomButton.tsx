@@ -30,7 +30,10 @@ export const ScrollToBottomButton = ({
   };
 
   return (
-    <TouchableOpacity style={[styles.defaultButton, style]} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.defaultButton, style]}
+      onPress={handlePress}
+    >
       {children}
     </TouchableOpacity>
   );

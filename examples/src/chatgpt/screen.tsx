@@ -26,10 +26,12 @@ export const ChatGPTScreen = () => {
   const listRef = useRef<StreamingMessageListRef>(null);
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isLastAssistantMessage, isStreamingMessage, entering } = getMessageMeta(
-      item,
-      index
-    );
+    const {
+      isLastUserMessage,
+      isLastAssistantMessage,
+      isStreamingMessage,
+      entering,
+    } = getMessageMeta(item, index);
 
     if (item.isNew) {
       setTimeout(() => clearIsNew(item.id), 500);
@@ -70,8 +72,15 @@ export const ChatGPTScreen = () => {
                 isStreaming={isStreaming}
                 contentContainerStyle={styles.listContent}
               />
-              <ScrollToBottomButton listRef={listRef} style={styles.scrollButton}>
-                <Ionicon name="arrow-down" size={24} color={theme.colors.textPrimary} />
+              <ScrollToBottomButton
+                listRef={listRef}
+                style={styles.scrollButton}
+              >
+                <Ionicon
+                  name="arrow-down"
+                  size={24}
+                  color={theme.colors.textPrimary}
+                />
               </ScrollToBottomButton>
             </View>
           </StreamingMessageListProvider>
