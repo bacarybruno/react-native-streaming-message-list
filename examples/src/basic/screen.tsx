@@ -7,7 +7,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
 import {
@@ -18,6 +17,7 @@ import {
 import Animated from 'react-native-reanimated';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
