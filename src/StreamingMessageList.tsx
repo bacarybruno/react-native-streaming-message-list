@@ -45,6 +45,7 @@ export const StreamingMessageList = <T,>({
   const prevDataLengthRef = useRef(0);
 
   const {
+    debouncedPlaceholderHeight,
     placeholderHeight,
     containerHeight,
     anchorMessageHeight,
@@ -72,7 +73,7 @@ export const StreamingMessageList = <T,>({
     data,
     isStreaming,
     isExistingThread: data.length > 0,
-    placeholderHeight,
+    placeholderHeight: debouncedPlaceholderHeight,
     anchorMessageHeight,
     containerHeight,
     containerPadding,
@@ -158,7 +159,7 @@ export const StreamingMessageList = <T,>({
         contentOffset: contentOffset.y,
         layoutMeasurement: layoutMeasurement.height,
         contentSize: contentSize.height,
-        placeholderHeight,
+        placeholderHeight: debouncedPlaceholderHeight,
       });
 
       checkWhitespaceDismissal(isVisible, whitespacePhase, () => {
@@ -182,19 +183,21 @@ export const StreamingMessageList = <T,>({
 
     const shouldRenderPlaceholder =
       (whitespacePhase === 'active' || whitespacePhase === 'visible_static') &&
-      placeholderHeight > 0;
+      debouncedPlaceholderHeight > 0;
 
     if (!shouldRenderPlaceholder) {
       return listFooterComponent;
     }
 
     return (
-      <View style={{ height: placeholderHeight }}>{listFooterComponent}</View>
+      <View style={{ height: debouncedPlaceholderHeight }}>
+        {listFooterComponent}
+      </View>
     );
   };
 
   useEffect(() => {
-    if (placeholderHeight > 0) {
+    if (debouncedPlaceholderHeight > 0) {
       const timer = setTimeout(() => {
         setIsPlaceholderStable(true);
       }, placeholderStableDelayMs);
@@ -202,9 +205,13 @@ export const StreamingMessageList = <T,>({
     }
 
     return undefined;
-  }, [placeholderHeight, setIsPlaceholderStable, placeholderStableDelayMs]);
+  }, [
+    debouncedPlaceholderHeight,
+    setIsPlaceholderStable,
+    placeholderStableDelayMs,
+  ]);
 
-  const contextValue: StreamingMessageListInternalContext = {
+  const internalContextValue: StreamingMessageListInternalContext = {
     setAnchorMessageHeight,
     setStreamingContentHeight,
   };
@@ -214,7 +221,7 @@ export const StreamingMessageList = <T,>({
   }
 
   return (
-    <StreamingMessageListContext.Provider value={contextValue}>
+    <StreamingMessageListContext.Provider value={internalContextValue}>
       <LegendList<T>
         ref={listRef}
         {...restProps}

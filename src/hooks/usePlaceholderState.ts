@@ -18,6 +18,8 @@ const calculatePlaceholderHeight = (
 export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
   const debounceMs = config?.debounceMs ?? DEFAULT_DEBOUNCE_MS;
 
+  const [debouncedPlaceholderHeight, setDebouncedPlaceholderHeight] =
+    useState(0);
   const [placeholderHeight, setPlaceholderHeight] = useState(0);
   const [containerHeight, setContainerHeightState] = useState(0);
   const [anchorMessageHeight, setAnchorMessageHeightState] = useState(0);
@@ -26,9 +28,14 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
   const [containerPadding, setContainerPaddingState] = useState(0);
   const [paddingTop, setPaddingTopState] = useState(0);
 
+  const containerHeightRef = useRef(0);
+  const anchorMessageHeightRef = useRef(0);
   const streamingContentHeightRef = useRef(0);
+  const containerPaddingRef = useRef(0);
+  const placeholderHeightRef = useRef(0);
+
   const debouncedSetPlaceholderHeight = debounce((height: number) => {
-    setPlaceholderHeight(height);
+    setDebouncedPlaceholderHeight(height);
   }, debounceMs);
 
   useEffect(() => {
@@ -37,32 +44,32 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
     };
   }, [debouncedSetPlaceholderHeight]);
 
-  const recalculatePlaceholder = (
-    newContainerHeight?: number,
-    newAnchorMessageHeight?: number,
-    newStreamingContentHeight?: number
-  ) => {
+  const recalculatePlaceholder = () => {
     const height = calculatePlaceholderHeight(
-      newContainerHeight ?? containerHeight,
-      newAnchorMessageHeight ?? anchorMessageHeight,
-      newStreamingContentHeight ?? streamingContentHeightRef.current,
-      containerPadding
+      containerHeightRef.current,
+      anchorMessageHeightRef.current,
+      streamingContentHeightRef.current,
+      containerPaddingRef.current
     );
 
-    if (height !== placeholderHeight) {
-      debouncedSetPlaceholderHeight(height);
-    }
+    placeholderHeightRef.current = height;
+    setPlaceholderHeight(height);
+    debouncedSetPlaceholderHeight(height);
   };
 
+  const getPlaceholderHeight = () => placeholderHeightRef.current;
+
   const setContainerHeight = (height: number) => {
+    containerHeightRef.current = height;
     setContainerHeightState(height);
-    recalculatePlaceholder(height, undefined, undefined);
+    recalculatePlaceholder();
   };
 
   const setAnchorMessageHeight = (height: number) => {
-    setAnchorMessageHeightState(height);
+    anchorMessageHeightRef.current = height;
     streamingContentHeightRef.current = 0;
-    recalculatePlaceholder(undefined, height, 0);
+    setAnchorMessageHeightState(height);
+    recalculatePlaceholder();
   };
 
   const setStreamingContentHeight = (height: number, force = false) => {
@@ -71,17 +78,20 @@ export const usePlaceholderState = (config?: StreamingMessageListConfig) => {
     }
 
     streamingContentHeightRef.current = height;
-    recalculatePlaceholder(undefined, undefined, height);
+    recalculatePlaceholder();
   };
 
   const setContainerPadding = (padding: number, topPadding: number) => {
+    containerPaddingRef.current = padding;
     setContainerPaddingState(padding);
     setPaddingTopState(topPadding);
     recalculatePlaceholder();
   };
 
   return {
+    debouncedPlaceholderHeight,
     placeholderHeight,
+    getPlaceholderHeight,
     containerHeight,
     anchorMessageHeight,
     whitespacePhase,
