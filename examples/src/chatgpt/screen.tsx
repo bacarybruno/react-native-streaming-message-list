@@ -20,7 +20,7 @@ import { ScrollToBottomButton } from '../shared/ScrollToBottomButton';
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
     useChatMessages({
-      initialDelay: 3000,
+      initialDelay: 2000,
       chunkDelay: 80,
     });
   const listRef = useRef<StreamingMessageListRef>(null);
