@@ -20,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Ionicon from '@expo/vector-icons/Ionicons';
 import { ScrollToBottomButton } from '../shared/ScrollToBottomButton';
+import { StatusBar } from 'expo-status-bar';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
@@ -73,56 +74,62 @@ export const BasicChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
-          <Text style={styles.headerSubtitle}>
-            ChatGPT-style smart scrolling
-          </Text>
-        </View>
-
-        <StreamingMessageListProvider>
-          <View style={styles.listContainer}>
-            <StreamingMessageList
-              ref={listRef}
-              data={messages}
-              keyExtractor={(item) => item.id}
-              renderItem={renderMessage}
-              isStreaming={isStreaming}
-              contentContainerStyle={styles.listContent}
-            />
-            <ScrollToBottomButton listRef={listRef} style={styles.scrollButton}>
-              <Ionicon name="arrow-down" size={24} color="#fff" />
-            </ScrollToBottomButton>
-          </View>
-        </StreamingMessageListProvider>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={input}
-            onChangeText={setInput}
-            placeholder="Type a message..."
-            placeholderTextColor="#999"
-            onSubmitEditing={handleSend}
-            editable={!isStreaming}
-          />
-          <TouchableOpacity
-            style={[
-              styles.sendButton,
-              (!input.trim() || isStreaming) && styles.sendButtonDisabled,
-            ]}
-            onPress={handleSend}
-            disabled={!input.trim() || isStreaming}
-          >
-            <Text style={styles.sendButtonText}>
-              {isStreaming ? '...' : 'Send'}
+    <>
+      <StatusBar style="dark" />
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
+            <Text style={styles.headerSubtitle}>
+              ChatGPT-style smart scrolling
             </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </View>
+
+          <StreamingMessageListProvider>
+            <View style={styles.listContainer}>
+              <StreamingMessageList
+                ref={listRef}
+                data={messages}
+                keyExtractor={(item) => item.id}
+                renderItem={renderMessage}
+                isStreaming={isStreaming}
+                contentContainerStyle={styles.listContent}
+              />
+              <ScrollToBottomButton
+                listRef={listRef}
+                style={styles.scrollButton}
+              >
+                <Ionicon name="arrow-down" size={24} color="#fff" />
+              </ScrollToBottomButton>
+            </View>
+          </StreamingMessageListProvider>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={input}
+              onChangeText={setInput}
+              placeholder="Type a message..."
+              placeholderTextColor="#999"
+              onSubmitEditing={handleSend}
+              editable={!isStreaming}
+            />
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                (!input.trim() || isStreaming) && styles.sendButtonDisabled,
+              ]}
+              onPress={handleSend}
+              disabled={!input.trim() || isStreaming}
+            >
+              <Text style={styles.sendButtonText}>
+                {isStreaming ? '...' : 'Send'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </>
   );
 };
 
