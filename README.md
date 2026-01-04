@@ -100,21 +100,24 @@ Pass it to `StreamingMessageList`:
 To enable smart scrolling, wrap two special messages:
 
 - **Last user message**: Wrap with `AnchorItem` (this message will stay near the top)
-- **Streaming assistant message**: Wrap with `StreamingItem` (the growing response)
+- **Last assistant message**: Wrap with `StreamingItem` (tracks height changes during and after streaming)
 
 ```tsx
 import { AnchorItem, StreamingItem } from 'react-native-streaming-message-list';
 
 const renderMessage = ({ item, index }) => {
   const isLastUserMessage =
-    item.role === 'user' && index === messages.length - 1;
-  const isStreamingMessage = item.role === 'assistant' && isStreaming;
+    item.role === 'user' &&
+    messages.findLastIndex(m => m.role === 'user') === index;
+  const isLastAssistantMessage =
+    item.role === 'assistant' &&
+    messages.findLastIndex(m => m.role === 'assistant') === index;
 
   let content = <YourMessageBubble message={item} />;
 
   if (isLastUserMessage) {
     content = <AnchorItem>{content}</AnchorItem>;
-  } else if (isStreamingMessage) {
+  } else if (isLastAssistantMessage) {
     content = <StreamingItem>{content}</StreamingItem>;
   }
 
@@ -134,9 +137,9 @@ That's it! The list will now handle ChatGPT-style scrolling automatically.
 
 - **`StreamingMessageList`**: Your main list component. Use it instead of `FlatList` for any chat/message list where content can stream or grow.
 
-- **`AnchorItem`**: Wrap the **last user message** before a streaming response begins. This keeps it visible near the top while the assistant response grows below it.
+- **`AnchorItem`**: Wrap the **last user message**. This keeps it visible near the top while the assistant response grows below it.
 
-- **`StreamingItem`**: Wrap the **currently growing/streaming message** (typically the last assistant message). This enables smooth scroll tracking as content updates.
+- **`StreamingItem`**: Wrap the **last assistant message**. Keep this wrapper even after streaming ends to track height changes (like action buttons appearing).
 
 ### Optional animations
 
@@ -210,7 +213,7 @@ Wrapper for the message that should be "anchored" near the top when a new conver
 
 ### `<StreamingItem>`
 
-Wrapper for content that's actively growing/updating (typically the last assistant message while streaming).
+Wrapper for the last assistant message.
 
 ```tsx
 <StreamingItem>

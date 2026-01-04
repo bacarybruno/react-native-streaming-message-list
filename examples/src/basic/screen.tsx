@@ -78,7 +78,7 @@ export const BasicChatScreen = () => {
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          keyboardVerticalOffset={0}
         >
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
