@@ -1,5 +1,11 @@
 import { useRef } from 'react';
-import { StyleSheet, StatusBar, View } from 'react-native';
+import {
+  StyleSheet,
+  StatusBar,
+  View,
+  Platform,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {
   StreamingMessageList,
   AnchorItem,
@@ -12,7 +18,6 @@ import { theme } from './theme';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
@@ -56,9 +61,12 @@ export const ChatGPTScreen = () => {
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
           <Header />
-
           <View style={styles.listContainer}>
             <StreamingMessageList
               ref={listRef}
@@ -69,7 +77,6 @@ export const ChatGPTScreen = () => {
               contentContainerStyle={styles.listContent}
             />
           </View>
-
           <Composer onSend={sendMessage} disabled={isStreaming} />
         </KeyboardAvoidingView>
       </SafeAreaView>

@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {
   StreamingMessageList,
@@ -16,7 +18,6 @@ import Animated from 'react-native-reanimated';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
@@ -71,14 +72,17 @@ export const BasicChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Streaming Chat Demo</Text>
           <Text style={styles.headerSubtitle}>
             ChatGPT-style smart scrolling
           </Text>
         </View>
-
         <View style={styles.listContainer}>
           <StreamingMessageList
             ref={listRef}
@@ -89,7 +93,6 @@ export const BasicChatScreen = () => {
             contentContainerStyle={styles.listContent}
           />
         </View>
-
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
