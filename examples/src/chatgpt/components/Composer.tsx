@@ -8,13 +8,17 @@ import {
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
 import { theme } from '../theme';
+import { showNotImplementedAlert } from '../../shared/notImplemented';
 
 type ComposerProps = {
   onSend: (text: string) => void;
   disabled?: boolean;
 };
 
-export const Composer = ({ onSend, disabled = false }: ComposerProps) => {
+export const Composer = ({
+  onSend,
+  disabled = false,
+}: ComposerProps) => {
   const [text, setText] = useState('');
 
   const handleSend = () => {
@@ -32,7 +36,7 @@ export const Composer = ({ onSend, disabled = false }: ComposerProps) => {
         <TouchableOpacity
           style={styles.iconButton}
           disabled={disabled}
-          onPress={() => {}}
+          onPress={showNotImplementedAlert}
         >
           <Text style={styles.plusIcon}>+</Text>
         </TouchableOpacity>
@@ -44,8 +48,6 @@ export const Composer = ({ onSend, disabled = false }: ComposerProps) => {
           placeholder="Ask anything"
           placeholderTextColor={theme.colors.textTertiary}
           multiline={false}
-          maxLength={2000}
-          editable={!disabled}
           onSubmitEditing={handleSend}
           underlineColorAndroid="transparent"
           returnKeyType="send"

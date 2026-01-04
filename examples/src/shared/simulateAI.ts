@@ -9,10 +9,10 @@ export async function simulateAIResponse(
     chunkDelay?: number;
   }
 ): Promise<void> {
-  const initialDelay = options?.initialDelay ?? 800;
+  // const initialDelay = options?.initialDelay ?? 800;
   const chunkDelay = options?.chunkDelay ?? 60;
 
-  await new Promise((resolve) => setTimeout(resolve, initialDelay));
+  await new Promise((resolve) => setTimeout(resolve, 10000));
 
   return new Promise((resolve) => {
     const response = mockResponses[responseIndex];

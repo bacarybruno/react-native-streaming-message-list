@@ -100,21 +100,24 @@ Pass it to `StreamingMessageList`:
 To enable smart scrolling, wrap two special messages:
 
 - **Last user message**: Wrap with `AnchorItem` (this message will stay near the top)
-- **Streaming assistant message**: Wrap with `StreamingItem` (the growing response)
+- **Last assistant message**: Wrap with `StreamingItem` (tracks height changes during and after streaming)
 
 ```tsx
 import { AnchorItem, StreamingItem } from 'react-native-streaming-message-list';
 
 const renderMessage = ({ item, index }) => {
   const isLastUserMessage =
-    item.role === 'user' && index === messages.length - 1;
-  const isStreamingMessage = item.role === 'assistant' && isStreaming;
+    item.role === 'user' &&
+    messages.findLastIndex(m => m.role === 'user') === index;
+  const isLastAssistantMessage =
+    item.role === 'assistant' &&
+    messages.findLastIndex(m => m.role === 'assistant') === index;
 
   let content = <YourMessageBubble message={item} />;
 
   if (isLastUserMessage) {
     content = <AnchorItem>{content}</AnchorItem>;
-  } else if (isStreamingMessage) {
+  } else if (isLastAssistantMessage) {
     content = <StreamingItem>{content}</StreamingItem>;
   }
 
@@ -134,9 +137,11 @@ That's it! The list will now handle ChatGPT-style scrolling automatically.
 
 - **`StreamingMessageList`**: Your main list component. Use it instead of `FlatList` for any chat/message list where content can stream or grow.
 
-- **`AnchorItem`**: Wrap the **last user message** before a streaming response begins. This keeps it visible near the top while the assistant response grows below it.
+- **`AnchorItem`**: Wrap the **last user message**. This keeps it visible near the top while the assistant response grows below it.
 
-- **`StreamingItem`**: Wrap the **currently growing/streaming message** (typically the last assistant message). This enables smooth scroll tracking as content updates.
+- **`StreamingItem`**: Wrap the **last assistant message**. Keep this wrapper even after streaming ends to track height changes (like action buttons appearing).
+
+- **`ScrollToBottomButton`**: Optional pre-built button component that automatically shows/hides based on scroll position. Fully customizable.
 
 ### Optional animations
 
@@ -171,6 +176,49 @@ See the [Reanimated documentation](https://docs.swmansion.com/react-native-reani
 3. Assistant finishes → set `isStreaming={false}`
 4. Repeat for the next turn
 
+### Scroll to bottom button
+
+#### Option 1: Use the built-in component (recommended)
+
+```tsx
+import {
+  StreamingMessageList,
+  StreamingMessageListProvider,
+  ScrollToBottomButton,
+} from 'react-native-streaming-message-list';
+
+const listRef = useRef(null);
+
+<StreamingMessageListProvider>
+  <View style={{ flex: 1 }}>
+    <StreamingMessageList ref={listRef} data={messages} ... />
+    <ScrollToBottomButton listRef={listRef} style={styles.scrollButton}>
+      <YourIcon />
+    </ScrollToBottomButton>
+  </View>
+</StreamingMessageListProvider>
+```
+
+The button automatically shows when the user scrolls away from bottom and hides when at bottom or when content doesn't fill the viewport.
+
+#### Option 2: Build your own with `useStreamingMessageList`
+
+```tsx
+import { useStreamingMessageList } from 'react-native-streaming-message-list';
+
+const CustomScrollButton = ({ listRef }) => {
+  const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
+
+  if (isAtEnd || !contentFillsViewport) return null;
+
+  return (
+    <TouchableOpacity onPress={() => listRef.current?.scrollToEnd({ animated: true })}>
+      <Text>↓</Text>
+    </TouchableOpacity>
+  );
+};
+```
+
 ## API
 
 ### `<StreamingMessageList>`
@@ -195,6 +243,7 @@ Extends all `FlatList` props from `@legendapp/list`, plus:
 type StreamingMessageListConfig = {
   debounceMs?: number; // Debounce for placeholder height calculations (default: 150)
   placeholderStableDelayMs?: number; // Delay before placeholder is considered stable (default: 200)
+  isAtEndThreshold?: number; // Threshold in pixels for isAtEnd calculation (default: 10)
 };
 ```
 
@@ -210,13 +259,58 @@ Wrapper for the message that should be "anchored" near the top when a new conver
 
 ### `<StreamingItem>`
 
-Wrapper for content that's actively growing/updating (typically the last assistant message while streaming).
+Wrapper for the last assistant message. Keep this wrapper even after streaming ends to track height changes.
 
 ```tsx
 <StreamingItem>
   <YourMessageBubble />
 </StreamingItem>
 ```
+
+### `<ScrollToBottomButton>`
+
+Pre-built button component that automatically shows/hides based on scroll position.
+
+#### Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `listRef` | `React.RefObject<StreamingMessageListRef>` | Yes | Reference to the list |
+| `children` | `ReactNode` | Yes | Button content (icon, text, etc.) |
+| `style` | `StyleProp<ViewStyle>` | No | Custom styles (merged with default positioning) |
+| `onPress` | `() => void` | No | Custom press handler (default: scrolls to bottom) |
+
+```tsx
+<ScrollToBottomButton listRef={listRef} style={styles.button}>
+  <Icon name="arrow-down" />
+</ScrollToBottomButton>
+```
+
+### `<StreamingMessageListProvider>`
+
+Optional provider that enables access to scroll metrics via `useStreamingMessageList`. Required if using `ScrollToBottomButton` or `useStreamingMessageList` hook. Wrap your list and any components that need scroll metrics with this provider.
+
+```tsx
+<StreamingMessageListProvider>
+  <StreamingMessageList ... />
+  <YourScrollButton />
+</StreamingMessageListProvider>
+```
+
+### `useStreamingMessageList()`
+
+Hook to access scroll metrics. Must be used within `StreamingMessageListProvider`.
+
+```tsx
+import { useStreamingMessageList } from 'react-native-streaming-message-list';
+
+const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `isAtEnd` | `boolean` | `true` when scrolled to bottom (within threshold) |
+| `contentFillsViewport` | `boolean` | `true` when content height exceeds viewport |
 
 ## How It Works
 

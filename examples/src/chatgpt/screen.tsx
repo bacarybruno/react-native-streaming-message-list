@@ -1,20 +1,21 @@
-import {
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import { useRef } from 'react';
+import { StyleSheet, StatusBar, View } from 'react-native';
 import {
   StreamingMessageList,
+  StreamingMessageListProvider,
   AnchorItem,
   StreamingItem,
+  ScrollToBottomButton,
 } from 'react-native-streaming-message-list';
+import type { StreamingMessageListRef } from 'react-native-streaming-message-list';
 import Animated from 'react-native-reanimated';
 import { Header, MessageBubble, Composer } from './components';
 import { theme } from './theme';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import Ionicon from '@expo/vector-icons/Ionicons';
 
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
@@ -22,9 +23,10 @@ export const ChatGPTScreen = () => {
       initialDelay: 3000,
       chunkDelay: 80,
     });
+  const listRef = useRef<StreamingMessageListRef>(null);
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const { isLastUserMessage, isStreamingMessage, entering } = getMessageMeta(
+    const { isLastUserMessage, isLastAssistantMessage, isStreamingMessage, entering } = getMessageMeta(
       item,
       index
     );
@@ -44,7 +46,7 @@ export const ChatGPTScreen = () => {
 
     if (isLastUserMessage) {
       content = <AnchorItem>{content}</AnchorItem>;
-    } else if (isStreamingMessage) {
+    } else if (isLastAssistantMessage) {
       content = <StreamingItem>{content}</StreamingItem>;
     }
 
@@ -55,20 +57,24 @@ export const ChatGPTScreen = () => {
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={0}
-        >
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
           <Header />
 
-          <StreamingMessageList
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={renderMessage}
-            isStreaming={isStreaming}
-            contentContainerStyle={styles.listContent}
-          />
+          <StreamingMessageListProvider>
+            <View style={styles.listContainer}>
+              <StreamingMessageList
+                ref={listRef}
+                data={messages}
+                keyExtractor={(item) => item.id}
+                renderItem={renderMessage}
+                isStreaming={isStreaming}
+                contentContainerStyle={styles.listContent}
+              />
+              <ScrollToBottomButton listRef={listRef} style={styles.scrollButton}>
+                <Ionicon name="arrow-down" size={24} color={theme.colors.textPrimary} />
+              </ScrollToBottomButton>
+            </View>
+          </StreamingMessageListProvider>
 
           <Composer onSend={sendMessage} disabled={isStreaming} />
         </KeyboardAvoidingView>
@@ -82,7 +88,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.bgPrimary,
   },
+  listContainer: {
+    flex: 1,
+  },
   listContent: {
     padding: theme.spacing.lg,
+  },
+  scrollButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.bgTertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.borderLight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

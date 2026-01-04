@@ -71,6 +71,9 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
       const isLastUserMessage =
         item.role === 'user' &&
         messages.findLastIndex((m) => m.role === 'user') === index;
+      const isLastAssistantMessage =
+        item.role === 'assistant' &&
+        messages.findLastIndex((m) => m.role === 'assistant') === index;
       const isStreamingMessage =
         item.role === 'assistant' &&
         index === messages.length - 1 &&
@@ -85,7 +88,7 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
         }
       }
 
-      return { isLastUserMessage, isStreamingMessage, entering };
+      return { isLastUserMessage, isLastAssistantMessage, isStreamingMessage, entering };
     },
     [messages, isStreaming]
   );
