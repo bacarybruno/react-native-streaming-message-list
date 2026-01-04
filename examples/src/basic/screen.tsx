@@ -11,7 +11,6 @@ import {
   StreamingMessageListProvider,
   AnchorItem,
   StreamingItem,
-  ScrollToBottomButton,
 } from 'react-native-streaming-message-list';
 import type { StreamingMessageListRef } from 'react-native-streaming-message-list';
 import Animated from 'react-native-reanimated';
@@ -20,6 +19,7 @@ import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Ionicon from '@expo/vector-icons/Ionicons';
+import { ScrollToBottomButton } from '../shared/ScrollToBottomButton';
 
 export const BasicChatScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =

@@ -141,8 +141,6 @@ That's it! The list will now handle ChatGPT-style scrolling automatically.
 
 - **`StreamingItem`**: Wrap the **last assistant message**. Keep this wrapper even after streaming ends to track height changes (like action buttons appearing).
 
-- **`ScrollToBottomButton`**: Optional pre-built button component that automatically shows/hides based on scroll position. Fully customizable.
-
 ### Optional animations
 
 For message animations, use `Animated.View` from `react-native-reanimated` with the `entering` prop. 
@@ -178,45 +176,38 @@ See the [Reanimated documentation](https://docs.swmansion.com/react-native-reani
 
 ### Scroll to bottom button
 
-#### Option 1: Use the built-in component (recommended)
+Use `useStreamingMessageList` to show a button when the user scrolls away from the bottom:
 
 ```tsx
 import {
   StreamingMessageList,
   StreamingMessageListProvider,
-  ScrollToBottomButton,
+  useStreamingMessageList,
 } from 'react-native-streaming-message-list';
+
+const ScrollToBottomButton = ({ listRef }) => {
+  const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
+
+  if (isAtEnd || !contentFillsViewport) return null;
+
+  return (
+    <TouchableOpacity
+      style={styles.scrollButton}
+      onPress={() => listRef.current?.scrollToEnd({ animated: true })}
+    >
+      <Text>↓</Text>
+    </TouchableOpacity>
+  );
+};
 
 const listRef = useRef(null);
 
 <StreamingMessageListProvider>
   <View style={{ flex: 1 }}>
     <StreamingMessageList ref={listRef} data={messages} ... />
-    <ScrollToBottomButton listRef={listRef} style={styles.scrollButton}>
-      <YourIcon />
-    </ScrollToBottomButton>
+    <ScrollToBottomButton listRef={listRef} />
   </View>
 </StreamingMessageListProvider>
-```
-
-The button automatically shows when the user scrolls away from bottom and hides when at bottom or when content doesn't fill the viewport.
-
-#### Option 2: Build your own with `useStreamingMessageList`
-
-```tsx
-import { useStreamingMessageList } from 'react-native-streaming-message-list';
-
-const CustomScrollButton = ({ listRef }) => {
-  const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
-
-  if (isAtEnd || !contentFillsViewport) return null;
-
-  return (
-    <TouchableOpacity onPress={() => listRef.current?.scrollToEnd({ animated: true })}>
-      <Text>↓</Text>
-    </TouchableOpacity>
-  );
-};
 ```
 
 ## API
@@ -267,28 +258,9 @@ Wrapper for the last assistant message. Keep this wrapper even after streaming e
 </StreamingItem>
 ```
 
-### `<ScrollToBottomButton>`
-
-Pre-built button component that automatically shows/hides based on scroll position.
-
-#### Props
-
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `listRef` | `React.RefObject<StreamingMessageListRef>` | Yes | Reference to the list |
-| `children` | `ReactNode` | Yes | Button content (icon, text, etc.) |
-| `style` | `StyleProp<ViewStyle>` | No | Custom styles (merged with default positioning) |
-| `onPress` | `() => void` | No | Custom press handler (default: scrolls to bottom) |
-
-```tsx
-<ScrollToBottomButton listRef={listRef} style={styles.button}>
-  <Icon name="arrow-down" />
-</ScrollToBottomButton>
-```
-
 ### `<StreamingMessageListProvider>`
 
-Optional provider that enables access to scroll metrics via `useStreamingMessageList`. Required if using `ScrollToBottomButton` or `useStreamingMessageList` hook. Wrap your list and any components that need scroll metrics with this provider.
+Optional provider that enables access to scroll metrics via `useStreamingMessageList`. Wrap your list and any components that need scroll metrics with this provider.
 
 ```tsx
 <StreamingMessageListProvider>

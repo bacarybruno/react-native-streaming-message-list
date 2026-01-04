@@ -1,7 +1,6 @@
 export { StreamingMessageList } from './StreamingMessageList';
 export { AnchorItem } from './AnchorItem';
 export { StreamingItem } from './StreamingItem';
-export { ScrollToBottomButton } from './ScrollToBottomButton';
 export {
   StreamingMessageListProvider,
   useStreamingMessageList,
