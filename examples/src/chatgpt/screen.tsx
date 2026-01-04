@@ -2,7 +2,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
 import {
@@ -15,6 +14,7 @@ import { Header, MessageBubble, Composer } from './components';
 import { theme } from './theme';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =

@@ -1,3 +1,4 @@
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { BasicChatScreen } from './src/basic/screen';
 import { ChatGPTScreen } from './src/chatgpt/screen';
 
@@ -6,5 +7,9 @@ const variant = (process.env.EXPO_PUBLIC_DEMO_VARIANT || 'chatgpt') as
   | 'chatgpt';
 
 export default function App() {
-  return variant === 'basic' ? <BasicChatScreen /> : <ChatGPTScreen />;
+  return (
+    <SafeAreaProvider>
+      {variant === 'basic' ? <BasicChatScreen /> : <ChatGPTScreen />}
+    </SafeAreaProvider>
+  );
 }
