@@ -62,7 +62,6 @@ export const ChatGPTScreen = () => {
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <Header />
-
           <StreamingMessageListProvider>
             <View style={styles.listContainer}>
               <StreamingMessageList
@@ -85,7 +84,6 @@ export const ChatGPTScreen = () => {
               </ScrollToBottomButton>
             </View>
           </StreamingMessageListProvider>
-
           <Composer onSend={sendMessage} disabled={isStreaming} />
         </KeyboardAvoidingView>
       </SafeAreaView>
