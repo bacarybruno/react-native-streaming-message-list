@@ -4,7 +4,9 @@ export { StreamingItem } from './StreamingItem';
 export {
   StreamingMessageListProvider,
   useStreamingMessageList,
+  type ScrollMetrics,
 } from './StreamingMessageListContext';
-export type { StreamingMessageListRef } from './types';
-export type { StreamingMessageListConfig } from './types';
-export type { ScrollMetrics } from './StreamingMessageListContext';
+export type {
+  StreamingMessageListRef,
+  StreamingMessageListConfig,
+} from './types';

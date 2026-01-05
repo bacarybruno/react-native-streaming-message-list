@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { useStreamingMessageList } from 'react-native-streaming-message-list';
-import type { StreamingMessageListRef } from 'react-native-streaming-message-list';
+import {
+  useStreamingMessageList,
+  type StreamingMessageListRef,
+} from 'react-native-streaming-message-list';
 
 type ScrollToBottomButtonProps = {
   listRef: React.RefObject<StreamingMessageListRef | null>;
