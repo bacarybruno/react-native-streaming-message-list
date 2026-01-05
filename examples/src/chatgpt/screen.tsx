@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   StreamingMessageList,
   StreamingMessageListProvider,
@@ -13,6 +13,7 @@ import { theme } from './theme';
 import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Ionicon from '@expo/vector-icons/Ionicons';
 import { ScrollToBottomButton } from '../shared/ScrollToBottomButton';
 import { StatusBar } from 'expo-status-bar';
@@ -59,12 +60,7 @@ export const ChatGPTScreen = () => {
     <>
       <StatusBar style="light" />
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={0}
-        >
-          {' '}
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
           <Header />
           <StreamingMessageListProvider>
             <View style={styles.listContainer}>
