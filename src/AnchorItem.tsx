@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
-import { useStreamingMessageList } from './StreamingMessageListContext';
+import { useStreamingMessageListInternal } from './StreamingMessageListContext';
 
 type AnchorItemProps = {
   children: ReactNode;
 };
 
 export const AnchorItem = ({ children }: AnchorItemProps) => {
-  const { setAnchorMessageHeight } = useStreamingMessageList();
+  const { setAnchorMessageHeight } = useStreamingMessageListInternal();
 
   const handleLayout = (event: LayoutChangeEvent) => {
     setAnchorMessageHeight(event.nativeEvent.layout.height);

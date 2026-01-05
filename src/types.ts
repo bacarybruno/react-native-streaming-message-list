@@ -14,6 +14,7 @@ export type WhitespacePhase =
 export type StreamingMessageListConfig = {
   debounceMs?: number;
   placeholderStableDelayMs?: number;
+  isAtEndThreshold?: number;
 };
 
 export type StreamingMessageListProps<T> = Omit<
