@@ -5,8 +5,8 @@ import {
   StreamingMessageListProvider,
   AnchorItem,
   StreamingItem,
+  type StreamingMessageListRef,
 } from 'react-native-streaming-message-list';
-import type { StreamingMessageListRef } from 'react-native-streaming-message-list';
 import Animated from 'react-native-reanimated';
 import { Header, MessageBubble, Composer } from './components';
 import { theme } from './theme';
@@ -14,7 +14,7 @@ import type { Message } from '../shared/types';
 import { useChatMessages } from '../shared/useChatMessages';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import Ionicon from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { ScrollToBottomButton } from '../shared/ScrollToBottomButton';
 import { StatusBar } from 'expo-status-bar';
 
@@ -76,7 +76,7 @@ export const ChatGPTScreen = () => {
                 listRef={listRef}
                 style={styles.scrollButton}
               >
-                <Ionicon
+                <Ionicons
                   name="arrow-down"
                   size={24}
                   color={theme.colors.textPrimary}
