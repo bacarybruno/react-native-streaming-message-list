@@ -1,4 +1,4 @@
-import { isValidElement, useEffect, useRef } from 'react';
+import { isValidElement, useContext, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type {
   LayoutChangeEvent,
@@ -10,14 +10,18 @@ import type { LegendListRef } from '@legendapp/list';
 import { usePlaceholderState } from './hooks/usePlaceholderState';
 import { useScrollBehavior } from './hooks/useScrollBehavior';
 import { isWhitespaceInViewport } from './scrollCalculations';
-import { StreamingMessageListContext } from './StreamingMessageListContext';
-import type { StreamingMessageListInternalContext } from './StreamingMessageListContext';
+import {
+  StreamingMessageListInternalContext,
+  StreamingMessageListPublicContext,
+} from './StreamingMessageListContext';
+import type { StreamingMessageListInternalContextType } from './StreamingMessageListContext';
 import type {
   StreamingMessageListProps,
   StreamingMessageListRef,
 } from './types';
 
 const DEFAULT_PLACEHOLDER_STABLE_DELAY_MS = 200;
+const DEFAULT_IS_AT_END_THRESHOLD = 10;
 
 export const StreamingMessageList = <T,>({
   data,
@@ -38,6 +42,8 @@ export const StreamingMessageList = <T,>({
 }) => {
   const placeholderStableDelayMs =
     config?.placeholderStableDelayMs ?? DEFAULT_PLACEHOLDER_STABLE_DELAY_MS;
+  const isAtEndThreshold =
+    config?.isAtEndThreshold ?? DEFAULT_IS_AT_END_THRESHOLD;
 
   const internalRef = useRef<LegendListRef>(null);
   const listRef = (ref ?? internalRef) as React.RefObject<LegendListRef | null>;
@@ -47,6 +53,7 @@ export const StreamingMessageList = <T,>({
   const {
     debouncedPlaceholderHeight,
     placeholderHeight,
+    getPlaceholderHeight,
     containerHeight,
     anchorMessageHeight,
     whitespacePhase,
@@ -79,6 +86,27 @@ export const StreamingMessageList = <T,>({
     containerPadding,
     paddingTop,
   });
+
+  const publicContext = useContext(StreamingMessageListPublicContext);
+
+  const updateScrollMetricsState = (
+    contentOffsetY: number,
+    layoutHeight: number,
+    contentHeight: number
+  ) => {
+    if (!publicContext) return;
+
+    const currentPlaceholderHeight = getPlaceholderHeight();
+    const targetContentHeight =
+      contentHeight - debouncedPlaceholderHeight + currentPlaceholderHeight;
+
+    const atEnd =
+      contentOffsetY + layoutHeight >= targetContentHeight - isAtEndThreshold;
+    const fills = targetContentHeight > layoutHeight;
+
+    publicContext.setIsAtEnd(atEnd);
+    publicContext.setContentFillsViewport(fills);
+  };
 
   const prevStreamingRef = useRef(isStreaming);
   useEffect(() => {
@@ -125,6 +153,12 @@ export const StreamingMessageList = <T,>({
     if (!didPerformInitialScroll) {
       performScrollToNewMessage(height);
     }
+
+    updateScrollMetricsState(
+      scrollMetricsRef.current.contentOffset,
+      scrollMetricsRef.current.layoutMeasurement,
+      height
+    );
   };
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -141,6 +175,12 @@ export const StreamingMessageList = <T,>({
         typeof style.paddingTop === 'number' ? style.paddingTop : padding;
       setContainerPadding(paddingBottom + topPadding, topPadding);
     }
+
+    updateScrollMetricsState(
+      scrollMetricsRef.current.contentOffset,
+      height,
+      scrollMetricsRef.current.contentSize
+    );
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -149,6 +189,12 @@ export const StreamingMessageList = <T,>({
     const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
 
     updateScrollMetrics(
+      contentOffset.y,
+      layoutMeasurement.height,
+      contentSize.height
+    );
+
+    updateScrollMetricsState(
       contentOffset.y,
       layoutMeasurement.height,
       contentSize.height
@@ -211,7 +257,7 @@ export const StreamingMessageList = <T,>({
     placeholderStableDelayMs,
   ]);
 
-  const internalContextValue: StreamingMessageListInternalContext = {
+  const internalContextValue: StreamingMessageListInternalContextType = {
     setAnchorMessageHeight,
     setStreamingContentHeight,
   };
@@ -221,7 +267,7 @@ export const StreamingMessageList = <T,>({
   }
 
   return (
-    <StreamingMessageListContext.Provider value={internalContextValue}>
+    <StreamingMessageListInternalContext.Provider value={internalContextValue}>
       <LegendList<T>
         ref={listRef}
         {...restProps}
@@ -241,6 +287,6 @@ export const StreamingMessageList = <T,>({
         renderItem={renderItem}
         scrollEventThrottle={16}
       />
-    </StreamingMessageListContext.Provider>
+    </StreamingMessageListInternalContext.Provider>
   );
 };

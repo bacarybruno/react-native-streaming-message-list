@@ -174,6 +174,42 @@ See the [Reanimated documentation](https://docs.swmansion.com/react-native-reani
 3. Assistant finishes → set `isStreaming={false}`
 4. Repeat for the next turn
 
+### Scroll to bottom button
+
+Use `useStreamingMessageList` to show a button when the user scrolls away from the bottom:
+
+```tsx
+import {
+  StreamingMessageList,
+  StreamingMessageListProvider,
+  useStreamingMessageList,
+} from 'react-native-streaming-message-list';
+
+const ScrollToBottomButton = ({ listRef }) => {
+  const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
+
+  if (isAtEnd || !contentFillsViewport) return null;
+
+  return (
+    <TouchableOpacity
+      style={styles.scrollButton}
+      onPress={() => listRef.current?.scrollToEnd({ animated: true })}
+    >
+      <Text>↓</Text>
+    </TouchableOpacity>
+  );
+};
+
+const listRef = useRef(null);
+
+<StreamingMessageListProvider>
+  <View style={{ flex: 1 }}>
+    <StreamingMessageList ref={listRef} data={messages} ... />
+    <ScrollToBottomButton listRef={listRef} />
+  </View>
+</StreamingMessageListProvider>
+```
+
 ## API
 
 ### `<StreamingMessageList>`
@@ -198,6 +234,7 @@ Extends all `FlatList` props from `@legendapp/list`, plus:
 type StreamingMessageListConfig = {
   debounceMs?: number; // Debounce for placeholder height calculations (default: 150)
   placeholderStableDelayMs?: number; // Delay before placeholder is considered stable (default: 200)
+  isAtEndThreshold?: number; // Threshold in pixels for isAtEnd calculation (default: 10)
 };
 ```
 
@@ -220,6 +257,32 @@ Wrapper for the last assistant message.
   <YourMessageBubble />
 </StreamingItem>
 ```
+
+### `<StreamingMessageListProvider>`
+
+Optional provider that enables access to scroll metrics via `useStreamingMessageList`. Wrap your list and any components that need scroll metrics with this provider.
+
+```tsx
+<StreamingMessageListProvider>
+  <StreamingMessageList ... />
+  <YourScrollButton />
+</StreamingMessageListProvider>
+```
+
+### `useStreamingMessageList()`
+
+Hook to access scroll metrics. Must be used within `StreamingMessageListProvider`.
+
+```tsx
+import { useStreamingMessageList } from 'react-native-streaming-message-list';
+
+const { isAtEnd, contentFillsViewport } = useStreamingMessageList();
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `isAtEnd` | `boolean` | `true` when scrolled to bottom (within threshold) |
+| `contentFillsViewport` | `boolean` | `true` when content height exceeds viewport |
 
 ## How It Works
 
