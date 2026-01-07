@@ -21,7 +21,7 @@ import { StatusBar } from 'expo-status-bar';
 export const ChatGPTScreen = () => {
   const { messages, isStreaming, sendMessage, clearIsNew, getMessageMeta } =
     useChatMessages({
-      initialDelay: 2000,
+      initialDelay: 1000,
       chunkDelay: 80,
     });
   const listRef = useRef<StreamingMessageListRef>(null);

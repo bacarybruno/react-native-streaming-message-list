@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { FadeIn } from 'react-native-reanimated';
 import type { Message } from './types';
 import { simulateAIResponse } from './simulateAI';
+import { Keyboard } from 'react-native';
 
 type UseChatMessagesOptions = {
   initialDelay?: number;
@@ -15,6 +16,8 @@ export const useChatMessages = (options?: UseChatMessagesOptions) => {
   const sendMessage = useCallback(
     (text: string) => {
       if (isStreaming || !text.trim()) return;
+
+      Keyboard.dismiss();
 
       const now = Date.now();
       const userMessage: Message = {
